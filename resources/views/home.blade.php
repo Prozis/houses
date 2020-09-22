@@ -1,8 +1,6 @@
 @extends('/layouts.app')
 
-@section('title')
-Домики
-@endsection
+@section('title', 'Дома')
 
 @section('content')
 <h1>main page</h1>
