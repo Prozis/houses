@@ -21,13 +21,20 @@ class ContactController extends Controller
       $contact->email = $req->input('email');
       $contact->message = $req->input('message');
       $contact->save();
-      return redirect()->route('contact-form')->with('succes', 'Сообщение отправлено');
+      return redirect()->route('feedback')->with('succes', 'Отзыв отправлен');
     }
 
     public function allData() {
       $messages = new Contact;
       return view('messages', ['data' => $messages
         ->orderBy('id')->get()
+      ]);
+    }
+
+    public function showOneMessage($id) {
+      $messages = new Contact;
+      return view('onemessage', ['data' => $messages
+        ->find($id)
       ]);
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ArticleController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,15 +15,20 @@ use App\Http\Controllers\ContactController;
 */
 
 Route::get('/', function () {
-    return view('home');
+  return view('home');
 })->name('home');
-
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
 
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
-Route::get('/contact/all', [ContactController::class, 'allData'])->name('contact-data');
-Route::post('/contact', [ContactController::class, 'submit'])->name('contact-form');
+
+Route::get('/feedback/all/{id}', [ContactController::class, 'showOneMessage'])
+->name('showOneMessage');
+
+Route::get('/feedback/all', [ContactController::class, 'allData'])
+->name('feedback');
+
+Route::post('/feedback', [ContactController::class, 'submit'])->name('feedback-form');
+
+//русурсная маршрутизация
+Route::resource('/articles', ArticleController::class);

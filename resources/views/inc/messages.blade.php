@@ -1,3 +1,4 @@
+<!-- Для вывода ошибок и сообщений -->
 @if($errors->any())
 <div class="alert alert-danger">
   <ul>
