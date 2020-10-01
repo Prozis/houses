@@ -14,9 +14,18 @@ use App\Http\Controllers\ArticleController;
 |
 */
 
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
+->name('home');
+
 Route::get('/', function () {
   return view('home');
-})->name('home');
+})->name('index');
+
+Route::get('/parser', function () {
+  return view('parser');
+})->middleware('auth')->name('parser');
 
 Route::get('/contact', function () {
     return view('contact');
