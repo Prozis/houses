@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ParserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,6 +27,8 @@ Route::get('/', function () {
 Route::get('/parser', function () {
   return view('parser');
 })->middleware('auth')->name('parser');
+
+Route::post('/parser', [ParserController::class, 'store'])->name('parser-post');
 
 Route::get('/contact', function () {
     return view('contact');

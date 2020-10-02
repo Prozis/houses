@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h3>Добавить статью</h3>
+<h3>Создать объявление</h3>
 
 {{ Form::model($article, ['url' => route('articles.store')]) }}
 

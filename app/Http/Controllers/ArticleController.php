@@ -47,10 +47,9 @@ class ArticleController extends Controller
       // Если будут ошибки, то возникнет исключение
       // Иначе возвращаются данные формы
       $data = $this->validate($request, [
-        'name' => 'required',
+        'title' => 'required',
         'price' => 'required',
-        
-        'body' => 'required|min:10',
+        'text' => 'required|min:10',
       ]);
 
       $article = new Article();
@@ -60,7 +59,7 @@ class ArticleController extends Controller
       $article->save();
 
       // Редирект на указанный маршрут с добавлением флеш-сообщения
-      $request->session()->flash('status', 'Статья добавлена!');
+      $request->session()->flash('status', 'Объявление добавлено!');
       return redirect()->route('articles.create');
     }
 
@@ -98,13 +97,13 @@ class ArticleController extends Controller
       $data = $this->validate($request, [
         // У обновления немного изменённая валидация. В проверку уникальности добавляется название поля и id текущего объекта
         // Если этого не сделать, Laravel будет ругаться на то что имя уже существует
-        'name' => 'required|unique:articles,name,' . $article->id,
-        'body' => 'required|min:10',
+        'title' => 'required|unique:articles,title,' . $article->id,
+        'text' => 'required|min:10',
       ]);
 
       $article->fill($data);
       $article->save();
-      $request->session()->flash('status', 'Статья обновлена!');
+      $request->session()->flash('status', 'Объявление обновлено!');
       return redirect()->route('articles.index');
     }
 
