@@ -20,7 +20,7 @@
 
 </head>
 <body>
-  <div class="container">
+
 
     @include('inc.nav')
 
@@ -30,6 +30,6 @@
     </div>
 
     @include('inc.footer')
-  </div>
+
 </body>
 </html>

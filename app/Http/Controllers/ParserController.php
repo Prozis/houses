@@ -20,57 +20,63 @@ class ParserController extends Controller
     $countArticles = $request->input('countArticles');
 
     $host = $host ?? 'https://realt.by/sale/cottages';
+    $countArticles = $countArticles ?? 10000;
 
     $data_site = file_get_contents($host); // получаем страницу сайта-донора
-    //require_once('/vendor/electrolinux/phpquery/phpQuery/phpQuery.php');
+
+    // Получаем объект dom
     $document = phpQuery::newDocument($data_site);
-      // .bd-item - класс для каждого объявления
+
+
+    // .bd-item - класс для каждого объявления
     $content_prev = $document->find('.bd-item ');
+    $countAddedArticles = 0;
 
     // перебираем в цикле все посты
     foreach ($content_prev as $el) {
-      $pq = pq($el); // pq это аналог $ в jQuery
+      if($countAddedArticles >= $countArticles) break; //ограничение количества записей
+      // Преобразуем dom объект в объект phpQuery с помощью метода pq();
+      $pq = pq($el);
       $title = $pq->find('.title .media .media-body a')->attr('title'); // парсим заголовок статьи
       $link = $pq->find('.title .media .media-body a')->attr('href'); // парсим ссылку на статью
-      $text = $pq->find('.bd-item-right .bd-item-right-center p'); // парсим текст в превью статьи
-      // $img = $pq->find('.bd-item-left .bd-item-left-top a img')->attr('src'); // парсим ссылку на изображение в превью статьи
-      $price = "";
-      $img = "";
+      //$description = $pq->find('.bd-item-right .bd-item-right-center p'); // парсим текст в превью статьи
+      //ниже почемуто не работает
+      $smallImage = $pq->find('.lazy')->attr('src'); // парсим ссылку на изображение в превью статьи
+      $price = $pq->find('.price-byr')->text(); //цена
 
-      if(!empty($link)) $data_link = file_get_contents($link);
-      $document_с = phpQuery::newDocument($data_link);
-      $content = $document_с->find('.broden-ajax-content');
+      if(!empty($link)) {
+        $data_link = file_get_contents($link);
+        $pageDOM = phpQuery::newDocument($data_link);
 
-        foreach ($content as $element) {
-            $pq2 = pq($element);
-            $img = $pq->find('.photo-item .lightgallery img')->attr('src'); //парсим первое фото
-            $area = $pq2->find('.table-row-right'); // парсим площадь
-            $price = $pq2->find('.price-byr'); // парсим цену
-        }
+          $page = pq($pageDOM);
+          //$content = $page->find('.inner-center-content');
+          $bigImage = $page->find('.photo-item .lightgallery img')->attr('src'); //парсим первое фото
+          $articleID = $page->find('.fr .f14')->text(); //id объявления
+          $articleID = preg_replace("/[^,.0-9]/", '', $articleID); //оставляем только цифры
+          $text = $page->find('.description')->text(); //основной текст
 
-
-      //запись объявления в базу данных
-
-      // $data = $this->validate($request, [
-      //   // У обновления немного изменённая валидация. В проверку уникальности добавляется название поля и id текущего объекта
-      //   // Если этого не сделать, Laravel будет ругаться на то что имя уже существует
-      //   'title' => 'required|unique:articles,name,' . $article->id,
-      //   'text' => 'required|min:10',
-      // ]);
+      }
 
       $article = new Article();
       // Заполнение статьи данными из формы
 
-      $article->title = $title;
-      $article->text = $text;
-      $article->price = $price;
-      $article->bigImage = $img;
+      $text = preg_replace('/\s?<p[^>]*?>.*?<\/p>\s?/si', ' ', $text); //убираем теги из текста
 
+      //костыль пока не пойму почему не работает маленькое изображение
+      $smallImage = $bigImage;
+
+      $article->articleID = $articleID;
+      $article->title = $title;
+      $article->smallImage = $smallImage;
+      $article->price = $price;
+      $article->bigImage = $bigImage;
+      $article->text = $text;
 
       //$article->fill($data);
       // При ошибках сохранения возникнет исключение
       $article->save();
 
+      $countAddedArticles++;
     	// echo "
     	// 	<div>
     	// 		<h3><a href='$link'>$h2</a></h3>
@@ -81,7 +87,7 @@ class ParserController extends Controller
 
     	}
 
-      phpQuery::unloadDocuments(); //выгружаем документ
+      phpQuery::unloadDocuments(); //выгружаем документы
 
       // Записываем информацию о превьюшках в базу данных
       // $post_prev = R::dispense('postprev');
@@ -113,7 +119,7 @@ class ParserController extends Controller
 
 
     // Редирект на указанный маршрут с добавлением флеш-сообщения
-    $request->session()->flash('status', 'Объявления добавлены в базу данных!');
+    $request->session()->flash('status', "$countAddedArticles объявлений добавлено в базу данных!");
     return redirect()->route('parser');
   }
 }
