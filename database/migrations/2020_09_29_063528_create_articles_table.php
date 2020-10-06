@@ -18,10 +18,10 @@ class CreateArticlesTable extends Migration
             $table->timestamps();
             $table->string('articleID')->nullable();
             $table->string('title');
-            $table->string('smallImage')->nullable();
             $table->string('price')->nullable();
             $table->string('area')->nullable();
-            $table->string('bigImage')->nullable();
+            $table->text('smallImage')->nullable();
+            $table->text('bigImage')->nullable();
             $table->text('text');
         });
     }

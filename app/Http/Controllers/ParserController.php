@@ -18,108 +18,86 @@ class ParserController extends Controller
     $host = $request->input('host');
     $startPage = $request->input('startPage');
     $countArticles = $request->input('countArticles');
-
-    $host = $host ?? 'https://realt.by/sale/cottages';
+    $startPage = $request->input('startPage');
+    $host = $host."/?page=".$startPage;
     $countArticles = $countArticles ?? 10000;
-
-    $data_site = file_get_contents($host); // получаем страницу сайта-донора
-
-    // Получаем объект dom
-    $document = phpQuery::newDocument($data_site);
-
-
-    // .bd-item - класс для каждого объявления
-    $content_prev = $document->find('.bd-item ');
+    $liminPage = $request->input('liminPage');
     $countAddedArticles = 0;
+    $countlookedArticle = 0;
 
-    // перебираем в цикле все посты
-    foreach ($content_prev as $el) {
-      if($countAddedArticles >= $countArticles) break; //ограничение количества записей
-      // Преобразуем dom объект в объект phpQuery с помощью метода pq();
-      $pq = pq($el);
-      $title = $pq->find('.title .media .media-body a')->attr('title'); // парсим заголовок статьи
-      $link = $pq->find('.title .media .media-body a')->attr('href'); // парсим ссылку на статью
-      //$description = $pq->find('.bd-item-right .bd-item-right-center p'); // парсим текст в превью статьи
-      //ниже почемуто не работает
-      $smallImage = $pq->find('.lazy')->attr('src'); // парсим ссылку на изображение в превью статьи
-      $price = $pq->find('.price-byr')->text(); //цена
+    for($i = 0; $i < $liminPage; $i ++) {
+      $data_site = file_get_contents($host); // получаем страницу сайта-донора
 
-      if(!empty($link)) {
-        $data_link = file_get_contents($link);
-        $pageDOM = phpQuery::newDocument($data_link);
+      // Получаем объект dom
+      $document = phpQuery::newDocument($data_site);
 
+      // .bd-item - класс для каждого объявления
+      $content_prev = $document->find('.bd-item ');
+
+      // перебираем в цикле все посты
+      foreach ($content_prev as $el) {
+        if($countAddedArticles >= $countArticles) break; //ограничение количества записей
+        $parsedArticle = [];
+        // Преобразуем dom объект в объект phpQuery с помощью метода pq();
+        $pq = pq($el);
+        $parsedArticle['title'] = $pq->find('.title .media .media-body a')->attr('title'); // парсим заголовок статьи
+        $parsedArticle['link'] = $pq->find('.title .media .media-body a')->attr('href'); // парсим ссылку на статью
+        $parsedArticle['price'] = $pq->find('.price-byr')->text(); //цена
+
+        if(!empty($link)) { //переходим по ссылке в объявление (если не пустая)
+          $data_link = file_get_contents($link);
+          $pageDOM = phpQuery::newDocument($data_link);
           $page = pq($pageDOM);
-          //$content = $page->find('.inner-center-content');
-          $bigImage = $page->find('.photo-item .lightgallery img')->attr('src'); //парсим первое фото
-          $articleID = $page->find('.fr .f14')->text(); //id объявления
-          $articleID = preg_replace("/[^,.0-9]/", '', $articleID); //оставляем только цифры
-          $text = $page->find('.description')->text(); //основной текст
+          $images = $page->find('.photo-item img'); //парсим фото
+          $bigImagesArray = [];//массивы ссылок на изображения
+          $smallImagesArray = [];
+          foreach ($images as $item) {
+          	$linkBigImage = pq($item)->parents('a'); //получаем родительскую ссылку изображения
+          	$parsedArticle['bigImage'][] = pq($linkBigImage)->attr('href');
+            $parsedArticle['smallImage'][] = pq($item)->attr('src');
+          }
+            $parsedArticle['articleID'] = $page->find('.f14:first')->text(); //ID
+            $parsedArticle['text'] = $page->find('.description')->text(); //основной текст
+        }
 
-      }
+        $parsedArticle['articleID'] = preg_replace("/[^,.0-9]/", '', $parsedArticle['articleID']); //убираем буквы из ID
+        $parsedArticle['text'] = strip_tags($parsedArticle['text']); //убираем теги
+        $parsedArticle['title'] = strip_tags($parsedArticle['title']);
+        if(count($parsedArticle['smallImage']) == 0) {
+          $parsedArticle['smallImage'][] = '';
+          $parsedArticle['bigImage'][] = '';
+        }
 
-      $article = new Article();
-      // Заполнение статьи данными из формы
+        //обновляем счетчик просмотренных объявлений
+        $countlookedArticle++;
 
-      $text = preg_replace('/\s?<p[^>]*?>.*?<\/p>\s?/si', ' ', $text); //убираем теги из текста
+        //проверка на повторность
+        $articlesID = Article::pluck('articleID')->toArray();
+        if(in_array($articleID, $articlesID)) continue;
 
-      //костыль пока не пойму почему не работает маленькое изображение
-      $smallImage = $bigImage;
+        $article = new Article();
 
-      $article->articleID = $articleID;
-      $article->title = $title;
-      $article->smallImage = $smallImage;
-      $article->price = $price;
-      $article->bigImage = $bigImage;
-      $article->text = $text;
+        //заполняем поля объявления
 
-      //$article->fill($data);
-      // При ошибках сохранения возникнет исключение
-      $article->save();
+        //тут исправить на fill
 
-      $countAddedArticles++;
-    	// echo "
-    	// 	<div>
-    	// 		<h3><a href='$link'>$h2</a></h3>
-    	// 		<p>$text</p>
-    	// 		img - $img
-    	// 	</div>
-    	// ";
+        $article->articleID = $articleID;
+        $article->title = $title;
+        $article->smallImage = $smallImagesArray;
+        $article->price = $price;
+        $article->bigImage = $bigImagesArray;
+        $article->text = $text;
 
-    	}
+        $article->save();
 
-      phpQuery::unloadDocuments(); //выгружаем документы
+        $countAddedArticles++;
+        } //конец цикла foreach
 
-      // Записываем информацию о превьюшках в базу данных
-      // $post_prev = R::dispense('postprev');
-          // if(!empty($h2)) $post_prev->h2 = strip_tags($h2); // strip_tags удаляет HTML тэги из строки
-          // if(!empty($link)) $post_prev->link = HOST.$link;
-          // if(!empty($text)) $post_prev->text = strip_tags($text);
-          // if(!empty($img)) $post_prev->img = HOST.$img;
-          // R::store($post_prev);
-
-          // пробегаемся по всем ссылкам на посты и парсим контент из открытых статей
-      //     if(!empty($link)) $data_link = file_get_contents(HOST.$link);
-      //     $document_с = phpQuery::newDocument($data_link);
-      //     $content = $document_с->find('.broden-ajax-content');
-    	//
-      //     foreach ($content as $element) {
-      //         $pq2 = pq($element);
-      //         $h1 = $pq2->find('.post-title h1'); // парсим главный заголовок статьи
-      //         $text_all = $pq2->find('.article__content .txt'); // парсим контент часть статьи
-      //     }
-    	//
-      // // Записываем информацию о статьях в базу данных
-      // $post = R::dispense('post');
-      //     if(!empty($h1)) $post->h1 = strip_tags($h1);
-      //     if(!empty($text_all)) $post->text = strip_tags($text_all);
-      //     R::store($post);
-
-
-
-
+        phpQuery::unloadDocuments(); //выгружаем документы
+      } //конец цикла for
 
     // Редирект на указанный маршрут с добавлением флеш-сообщения
-    $request->session()->flash('status', "$countAddedArticles объявлений добавлено в базу данных!");
+    $request->session()->flash('status', "Просмотрено: $countlookedArticle, добавлено: $countAddedArticles объявлений в базу данных!");
     return redirect()->route('parser');
   }
 }

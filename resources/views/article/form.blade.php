@@ -8,12 +8,6 @@
     {{ Form::label('price', 'Цена') }}
     {{ Form::text('price') }}
 
-		{{ Form::label('area', 'Площадь') }}
-    {{ Form::text('area') }}
-
-		{{ Form::label('bigImage', 'Ссылка на фото') }}
-    {{ Form::text('bigImage') }}
-
     {{ Form::label('text', 'Описание') }}
     {{ Form::textarea('text') }}
 </form>

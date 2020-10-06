@@ -16,18 +16,12 @@
         @foreach ($articles as $article)
         <div class="col-md-4">
         <div class="card mb-4 shadow-sm">
-          <img src="{{$article->smallImage}}" alt="">
-
+          <img src="{{ $article->smallImage[0] }}" alt="">
           <div class="card-body">
             <p class="card-text">
               <h6><a href="{{ route('articles.show', $article->id) }}">{{$article->title}}</a></h6>
-
             </p>
             <p>Цена: {{$article->price}}.</p>
-
-            {{-- Str::limit – функция-хелпер, которая обрезает текст до указанной длины --}}
-            {{-- Используется для очень длинных текстов, которые нужно сократить --}}
-            <p>{{Str::limit($article->text, 50)}}</p>
             <div class="d-flex justify-content-between align-items-center">
               <div class="btn-group">
                 <a  href="{{ route('articles.show', $article->id) }}">
@@ -53,7 +47,12 @@
         @endforeach
 
     </div>
+
 </div>
+<div class="pagination pagination-lg justify-content-center">
+  {{ $articles->links() }}
+</div>
+
 </div>
 
 @endsection

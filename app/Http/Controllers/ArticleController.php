@@ -14,11 +14,11 @@ class ArticleController extends Controller
      */
     public function index()
     {
-      $articles = Article::paginate();
-
-      // Статьи передаются в шаблон
+      $articles = Article::orderByDesc('id')->Simplepaginate(21); //выбор всех объявлений с простой пагинацией
       // compact('articles') => [ 'articles' => $articles ]
-      //return view('article.index', compact('articles'));
+      //
+      // $article->smallImage = json_decode($article->smallImage, true);
+      // $article->bigImage = json_decode($article->bigImage, true);
       return view('article.index', compact('articles'));
     }
 
@@ -71,6 +71,8 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
+      // $article->smallImage = json_decode($article->smallImage, true);
+      // $article->bigImage = json_decode($article->bigImage, true);
       return view('article.show', compact('article'));
     }
 
@@ -97,7 +99,7 @@ class ArticleController extends Controller
       $data = $this->validate($request, [
         // У обновления немного изменённая валидация. В проверку уникальности добавляется название поля и id текущего объекта
         // Если этого не сделать, Laravel будет ругаться на то что имя уже существует
-        'title' => 'required|unique:articles,title,' . $article->id,
+        'title' => 'required|min:10',
         'text' => 'required|min:10',
       ]);
 

@@ -18,8 +18,13 @@
     <input type="text" name="startPage" id="startPage" value="0" placeholder="" class="form-control">
   </div>
 
+  <div class="form-group">
+    <label for="liminPage">Лимит страниц</label>
+    <input type="text" name="liminPage" id="startPage" value="10" placeholder="" class="form-control">
+  </div>
+
 	<div class="form-group">
-    <label for="countArticles">Количество записей</label>
+    <label for="countArticles">Лимит записей</label>
     <input type="text" name="countArticles" id="countArticles" value="1000" placeholder="" class="form-control">
   </div>
 
@@ -56,23 +61,32 @@
 //     $pageDOM = phpQuery::newDocument($data_link);
 //
 //       $page = pq($pageDOM);
-//       //$content = $page->find('.inner-center-content');
-//       $bigImage = $page->find('.photo-item .lightgallery img')->attr('src'); //парсим первое фото
-//       $articleID = $page->find('.f14:first')->text();
-//       $articleID = preg_replace("/[^,.0-9]/", '', $articleID);
+//       $images = $page->find('.photo-item img'); //парсим фото
+//       $bigImagesArray = [];//массивы ссылок на изображения
+//       $smallImagesArray = [];
+//       foreach ($images as $item) {
+//       	$linkBigImage = pq($item)->parents('a'); //получаем родительскую ссылку изображения
+//       	$bigImagesArray[] = pq($linkBigImage)->attr('href');
+//         $smallImagesArray[] = pq($item)->attr('src');
+//       }
 //
-//       $text = $page->find('.description')->text();
+//       $articleID = $page->find('.f14:first')->text(); //ID
+//       $articleID = preg_replace("/[^,.0-9]/", '', $articleID);
+//       $text = $page->find('.description')->text(); //основной текст
 //
 //
 //   }
 //
-//   echo "<p>$title <br> $link <br> $price
+// //var_dump($bigImagesArray);
+// var_dump($smallImagesArray);
+// echo json_encode($smallImagesArray);
+//   echo "<p>$title <br> link - $link <br> price -$price
 //     <br>simg: $smallImage
-//       <br> Bigimg: $bigImage
+//       <br> Bigimg:
 //       <br> ID: $articleID
 //
 //       </p>";
-//   var_dump($smallImage);
+//
 //
 //   $countAddedArticles++;
 // }
