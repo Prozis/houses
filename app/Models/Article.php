@@ -12,8 +12,12 @@ class Article extends Model
     protected $casts = [
        'smallImage' => 'array',
        'bigImage' => 'array',
+       'price' => 'integer'
     ];
-    protected $fillable = ['articleID', 'title', 'smallImage', 'price', 'bigImage', 'text'];
+    protected $dates = [
+        'updateDate',
+    ];
+    protected $fillable = ['articleID', 'title', 'smallImage', 'price', 'bigImage', 'text', 'phone', 'updateDate', 'area'];
 
 
 }

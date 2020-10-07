@@ -22,7 +22,9 @@ class CreateArticlesTable extends Migration
             $table->string('area')->nullable();
             $table->text('smallImage')->nullable();
             $table->text('bigImage')->nullable();
-            $table->text('text');
+            $table->text('text')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('updateDate')->nullable();
         });
     }
 

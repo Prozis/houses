@@ -7,9 +7,12 @@
   <h1 class="display-4">Домовик</h1>
   <p class="lead">Доска объявлений по продаже домов, дач, котеджей. Лучшие предложения на рынке
   самый полный каталог, постоянное обновление. Лучшее место для поиска дома своей мечты</p>
+  <p class="lead">Ресурс недвижимости "Домовик" - один из крупнейших ресурсов поиска домов для покупки в стране. Ежедневно наш ресурс помогает людям в выгодном и безопасном решении их вопросов, связанных с продажей, покупкой, арендой недвижимости. Наша компания охватывает практически все направления и сегменты рынка, осуществляет все виды операций с недвижимостью Сейчас в компании работает более 10 сотрудников, имеющих многолетний опыт работы и знания, которые помогают успешно решить любой вопрос в сфере недвижимости. Более 5 лет компания гарантирует высокий уровень предоставляемых услуг, чем заслужила доверие клиентов и сейчас уверенно входит в список крупнейших агентств в стране.
+  </p>
+  <a  href="/articles"><button  class="btn btn-primary" type="button" name="button">
+  Объявления
+  </button></a>
 </div>
-<h1>Главная страница</h1>
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+
 @endsection
