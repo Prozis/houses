@@ -14,7 +14,10 @@
         @foreach ($articles as $article)
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-            <img src="{{ $article->smallImage[0] }}" alt="">
+            <?php //если нет изображений
+            $titleImage = $article->smallImage[0] ?? '';
+            ?>
+            <img src="<?= $titleImage ?>" alt="">
             <div class="card-body">
               <p class="card-text">
                 <h6><a href="{{ route('articles.show', $article->id) }}">{{$article->title}}</a></h6>
@@ -23,7 +26,7 @@
               if($article->price == 0) {
                 $price = "Цена договорная";
               } else  {
-                $price = $article->price."$.";
+                $price = $article->price."$";
               }
               ?>
               <p>Цена: <?= $price ?></p>
@@ -35,24 +38,27 @@
                       Подробнее
                     </button>
                   </a>
+                  &nbsp
                   @auth
-                  <a  href="{{ route('articles.destroy', $article) }}" rel="nofollow">
-                    <button  class="btn" type="button" name="button">
+                    <a href="{{ route('articles.destroy', $article) }}"
+                    data-method="delete"
+                    rel="nofollow">
+                    <button  class="btn btn-primary" type="button" name="button">
                       Удалить
                     </button>
-                  </a>
+                    </a>
                   @endauth
-                </div>
               </div>
             </div>
           </div>
         </div>
-        @endforeach
       </div>
-    </div>
-    <div class="pagination pagination-lg justify-content-center">
-      {{ $articles->links() }}
+      @endforeach
     </div>
   </div>
+  <div class="pagination pagination-lg justify-content-center">
+    {{ $articles->links() }}
+  </div>
+</div>
 
-  @endsection
+@endsection

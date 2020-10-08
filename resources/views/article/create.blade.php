@@ -6,6 +6,6 @@
 {{ Form::model($article, ['url' => route('articles.store')]) }}
 
   @include('article.form')
-  {{ Form::submit('Создать') }}
+  {{ Form::submit('Создать', ['class' => 'btn btn-primary']) }}
 {{ Form::close() }}
 @endsection

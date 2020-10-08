@@ -53,6 +53,7 @@ class ArticleController extends Controller
   public function create()
   {
     $article = new Article();
+
     return view('article.create', compact('article'));
   }
 
@@ -71,12 +72,16 @@ class ArticleController extends Controller
     $data = $this->validate($request, [
       'title' => 'required',
       'price' => 'required',
+      'phone' => 'required',
       'text' => 'required|min:10',
     ]);
 
     $article = new Article();
     // Заполнение статьи данными из формы
     $article->fill($data);
+    $article->updateDate = date("Y-m-d H:i:s");
+    $article->smallImage = [''];
+    $article->bigImage = [''];
     // При ошибках сохранения возникнет исключение
     $article->save();
 
@@ -119,7 +124,9 @@ class ArticleController extends Controller
     $data = $this->validate($request, [
       // У обновления немного изменённая валидация. В проверку уникальности добавляется название поля и id текущего объекта
       // Если этого не сделать, Laravel будет ругаться на то что имя уже существует
-      'title' => 'required|min:10',
+      'title' => 'required|min:5',
+      'price' => 'required',
+      'phone' => 'required',
       'text' => 'required|min:10',
     ]);
 
@@ -135,9 +142,11 @@ class ArticleController extends Controller
   * @param  \App\Models\Article  $article
   * @return \Illuminate\Http\Response
   */
-  public function destroy(Article $article)
+  public function destroy(Request $request, Article $article)
   {
+    //удаление в шаблонах с использованием @rails/ujs
     $article->delete();
+    $request->session()->flash('status', 'Объявление удалено!');
     return redirect()->route('articles.index');
   }
 }
