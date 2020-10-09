@@ -702,5 +702,8 @@
     "bugs": {
         "url": "https://github.com/Prozis/houses/issues"
     },
-    "homepage": "https://github.com/Prozis/houses#readme"
+    "homepage": "https://github.com/Prozis/houses#readme",
+    "scripts": {
+      "postinstall": "npm run prod"
+    }
 }
